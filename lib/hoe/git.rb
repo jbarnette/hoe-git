@@ -34,9 +34,10 @@ module Hoe::Git
   def define_git_tasks
     desc "Print the current changelog."
     task "git:changelog" do
-      tags = `git tag -l 'v*'`.split "\n"
-      tag  = ENV["FROM"] || tags.last
-      cmd  = "git log #{tag}.. '--format=tformat:%s|||%cN|||%cE'"
+      tags  = `git tag -l '#{git_release_tag_prefix}*'`.split "\n"
+      tag   = ENV["FROM"] || tags.last
+      range = [tag, "HEAD"].compact.join ".."
+      cmd   = "git log #{range} '--format=tformat:%s|||%cN|||%cE'"
 
       changes = `#{cmd}`.split("\n").map do |line|
         msg, author, email = line.split("|||").map { |e| e.empty? ? nil : e }
