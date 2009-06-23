@@ -5,18 +5,25 @@
 == Description
 
 A Hoe plugin for tighter Git integration. This plugin provides a
-<tt>git:tag</tt> task to automate release tagging and pushing, and I
-expect it'll learn a few more tricks in the future.
+git:tag task to automate release tagging and pushing, a git:changelog
+task to make release notes easier, and I expect it'll learn a few more
+tricks in the future.
 
-See the Hoe::Git module for a few configuration options.
+See the Hoe::Git module for more docs and a few configuration options.
 
 == Examples
 
-  # in your Rakefile
-  Hoe.plugin :git
+    # in your Rakefile
+    Hoe.plugin :git
 
-  # in your shell
-  $ rake release VERSION=1.0.0
+    # in your shell
+    $ rake git:changelog
+
+This will take all the commits since your last release and format 'em
+nicely for an RDoc changelog. Commits that weren't made by a developer
+will be attributed.
+
+    $ rake release VERSION=1.0.0
 
 In addition to the normal RubyForge release process, this will create
 and push a <tt>v1.0.0</tt> tag.
