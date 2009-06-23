@@ -5,6 +5,11 @@
 #   of the built-in <tt>release</tt> task. The tag will be
 #   <tt>"v#{version}"</tt> unless <tt>TAG</tt> or <tt>VERSION</tt> are
 #   set in the environment.
+#
+# * <tt>git:changelog</tt> -- Format a changelog of all the commits
+#   since the last release, or since the <tt>FROM</tt> env var if it's
+#   provided. Commits that weren't made by a project developer are
+#   attributed.
 
 module Hoe::Git
   VERSION = "1.0.0"
@@ -20,6 +25,30 @@ module Hoe::Git
   end
 
   def define_git_tasks
+    desc "Print the current changelog."
+    task "git:changelog" do
+      tags = `git tag -l 'v*'`.split "\n"
+      tag  = ENV["FROM"] || tags.last
+      cmd  = "git log #{tag}.. '--format=tformat:%s|||%cN|||%cE'"
+
+      changes = `#{cmd}`.split("\n").map do |line|
+        msg, author, email = line.split("|||").map { |e| e.empty? ? nil : e }
+
+        developer = author.include?(author) || email.include?(email)
+        change    = [msg]
+        change   << "[#{author || email}]" unless developer
+
+        change.join " "
+      end
+
+      puts "=== #{ENV["VERSION"] || 'NEXT'} / #{Time.new.strftime '%Y-%m-%d'}"
+      puts
+
+      changes.each do |change|
+        puts "* #{change}"
+      end
+    end
+
     desc "Create and push a TAG (default v#{version})."
     task "git:tag" do
       tag = ENV["TAG"] || "v#{ENV["VERSION"] || version}"
