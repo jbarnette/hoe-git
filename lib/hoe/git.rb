@@ -15,13 +15,20 @@ module Hoe::Git
   VERSION = "1.0.0"
 
   ##
+  # Optional: What do you want at the front of your release tags?
+  # [default: "v"]
+
+  attr_accessor :git_release_tag_prefix
+
+  ##
   # Optional: Which remotes do you want to push tags, etc. to?
   # [default: %w(origin)]
 
   attr_accessor :git_remotes
 
   def initialize_git
-    self.git_remotes = %w(origin)
+    self.git_release_tag_prefix = "v"
+    self.git_remotes            = %w(origin)
   end
 
   def define_git_tasks
@@ -51,7 +58,8 @@ module Hoe::Git
 
     desc "Create and push a TAG (default v#{version})."
     task "git:tag" do
-      tag = ENV["TAG"] || "v#{ENV["VERSION"] || version}"
+      tag   = ENV["TAG"]
+      tag ||= "#{git_release_tag_prefix}#{ENV["VERSION"] || version}"
 
       sh "git tag -f #{tag}"
       git_remotes.each { |remote| sh "git push -f #{remote} tag #{tag}" }
