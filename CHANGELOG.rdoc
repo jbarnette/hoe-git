@@ -1,3 +1,8 @@
+=== 1.1.1 / 2009-06-23
+
+* Use git_release_tag_prefix more consistently, handle unreleased case.
+* Make the README a bit better.
+
 === 1.1.0 / 2009-06-23
 
 * Allow configurable release tag prefixes.
