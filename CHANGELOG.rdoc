@@ -1,8 +1,10 @@
-=== UNRELEASED
+=== 1.1.0 / 2009-06-23
 
+* Allow configurable release tag prefixes.
+* Add git:changelog to make release notes easier.
 * Make the git:tag task respect a TAG env var.
+* Minor cleanups.
 
 === 1.0.0 / 2009-06-23
 
 * Birthday!
-

@@ -12,7 +12,7 @@
 #   attributed.
 
 module Hoe::Git
-  VERSION = "1.0.0"
+  VERSION = "1.1.0"
 
   ##
   # Optional: What do you want at the front of your release tags?
