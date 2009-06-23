@@ -1,5 +1,9 @@
+$: << "lib"
+
 require "rubygems"
 require "hoe"
+
+Hoe.plugin :git
 
 Hoe.spec "hoe-git" do
   developer "John Barnette", "jbarnette@rubyforge.org"
@@ -7,5 +11,6 @@ Hoe.spec "hoe-git" do
   self.extra_rdoc_files = FileList["*.rdoc"]
   self.history_file     = "CHANGELOG.rdoc"
   self.readme_file      = "README.rdoc"
-  self.testlib          = :minitest
+
+  extra_deps << ["hoe", ">= 2.2.0"]
 end
