@@ -32,6 +32,11 @@ and push a <tt>v1.0.0</tt> tag.
 
     $ gem install hoe-git
 
+== TODO
+
+* Release tags are sorted lexicographically right now, which won't
+  work for long.
+
 == License
 
 Copyright 2009 John Barnette (jbarnette@rubyforge.org)
