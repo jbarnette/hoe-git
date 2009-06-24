@@ -66,6 +66,12 @@ module Hoe::Git
       git_remotes.each { |remote| sh "git push -f #{remote} tag #{tag}" }
     end
 
+    task :release_sanity do
+      unless `git status` =~ /^nothing to commit/
+        abort "Won't release: Dirty index or untracked files present!"
+      end
+    end
+
     task :release => "git:tag"
   end
 end
