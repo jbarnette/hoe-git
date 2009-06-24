@@ -1,77 +1,79 @@
-# Tasks provided:
-#
-# * <tt>git:tag</tt> -- Tag the current version and push the tag to
-#   all the <tt>git_remotes</tt>. This task is added as a dependency
-#   of the built-in <tt>release</tt> task. The tag will be
-#   <tt>"v#{version}"</tt> unless <tt>TAG</tt> or <tt>VERSION</tt> are
-#   set in the environment.
-#
-# * <tt>git:changelog</tt> -- Format a changelog of all the commits
-#   since the last release, or since the <tt>FROM</tt> env var if it's
-#   provided. Commits that weren't made by a project developer are
-#   attributed.
+class Hoe #:nodoc:
 
-module Hoe::Git
-  VERSION = "1.1.1"
+  # This module is a Hoe plugin. You can set its attributes in your
+  # Rakefile Hoe spec, like this:
+  #
+  #    Hoe.plugin :git
+  #
+  #    Hoe.spec "myproj" do
+  #      self.git_release_tag_prefix = "REL_"
+  #      self.git_remotes << "myremote"
+  #    end
 
-  ##
-  # Optional: What do you want at the front of your release tags?
-  # [default: "v"]
+  module Git
 
-  attr_accessor :git_release_tag_prefix
+    # Duh.
+    VERSION = "1.1.1"
 
-  ##
-  # Optional: Which remotes do you want to push tags, etc. to?
-  # [default: %w(origin)]
+    # What do you want at the front of your release tags?
+    # [default: <tt>"v"</tt>]
 
-  attr_accessor :git_remotes
+    attr_accessor :git_release_tag_prefix
 
-  def initialize_git
-    self.git_release_tag_prefix = "v"
-    self.git_remotes            = %w(origin)
-  end
+    # Which remotes do you want to push tags, etc. to?
+    # [default: <tt>%w(origin)</tt>]
 
-  def define_git_tasks
-    desc "Print the current changelog."
-    task "git:changelog" do
-      tags  = `git tag -l '#{git_release_tag_prefix}*'`.split "\n"
-      tag   = ENV["FROM"] || tags.last
-      range = [tag, "HEAD"].compact.join ".."
-      cmd   = "git log #{range} '--format=tformat:%s|||%cN|||%cE'"
+    attr_accessor :git_remotes
 
-      changes = `#{cmd}`.split("\n").map do |line|
-        msg, author, email = line.split("|||").map { |e| e.empty? ? nil : e }
-
-        developer = author.include?(author) || email.include?(email)
-        change    = [msg]
-        change   << "[#{author || email}]" unless developer
-
-        change.join " "
-      end
-
-      puts "=== #{ENV["VERSION"] || 'NEXT'} / #{Time.new.strftime '%Y-%m-%d'}"
-      puts
-
-      changes.each do |change|
-        puts "* #{change}"
-      end
+    def initialize_git #:nodoc:
+      self.git_release_tag_prefix = "v"
+      self.git_remotes            = %w(origin)
     end
 
-    desc "Create and push a TAG (default v#{version})."
-    task "git:tag" do
-      tag   = ENV["TAG"]
-      tag ||= "#{git_release_tag_prefix}#{ENV["VERSION"] || version}"
+    def define_git_tasks #:nodoc:
 
-      sh "git tag -f #{tag}"
-      git_remotes.each { |remote| sh "git push -f #{remote} tag #{tag}" }
-    end
+      desc "Print the current changelog."
+      task "git:changelog" do
+        tags  = `git tag -l '#{git_release_tag_prefix}*'`.split "\n"
+        tag   = ENV["FROM"] || tags.last
+        range = [tag, "HEAD"].compact.join ".."
+        cmd   = "git log #{range} '--format=tformat:%s|||%cN|||%cE'"
 
-    task :release_sanity do
-      unless `git status` =~ /^nothing to commit/
-        abort "Won't release: Dirty index or untracked files present!"
+        changes = `#{cmd}`.split("\n").map do |line|
+          msg, author, email = line.split("|||").map { |e| e.empty? ? nil : e }
+
+          developer = author.include?(author) || email.include?(email)
+          change    = [msg]
+          change   << "[#{author || email}]" unless developer
+
+          change.join " "
+        end
+
+        puts "=== #{ENV["VERSION"] || 'NEXT'} / #{Time.new.strftime '%Y-%m-%d'}"
+        puts
+
+        changes.each { |change| puts "* #{change}" }
       end
-    end
 
-    task :release => "git:tag"
+      desc "Create and push a TAG " +
+           "(default #{git_release_tag_prefix}#{version})."
+
+      task "git:tag" do
+        tag   = ENV["TAG"]
+        tag ||= "#{git_release_tag_prefix}#{ENV["VERSION"] || version}"
+
+        sh "git tag -f #{tag}"
+        git_remotes.each { |remote| sh "git push -f #{remote} tag #{tag}" }
+      end
+
+      task :release_sanity do
+        unless `git status` =~ /^nothing to commit/
+          abort "Won't release: Dirty index or untracked files present!"
+        end
+      end
+
+      task :release => "git:tag"
+
+    end
   end
 end
