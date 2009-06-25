@@ -36,6 +36,11 @@ In addition to the normal RubyForge release process, this will create
 and push a <tt>v1.0.0</tt> tag. It'll also abort the release if your
 index is dirty, or if there are untracked files present.
 
+== Dependencies
+
+Hoe and Git, obviously. I wouldn't be surprised if things don't quite
+work for git < 1.6.3.
+
 == Installation
 
     $ gem install hoe-git
