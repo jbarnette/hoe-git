@@ -1,3 +1,8 @@
+=== 1.1.2 / 2009-06-26
+
+* Doc cleanups.
+* Veto releases when the index is dirty.
+
 === 1.1.1 / 2009-06-23
 
 * Use git_release_tag_prefix more consistently, handle unreleased case.
