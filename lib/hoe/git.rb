@@ -13,7 +13,7 @@ class Hoe #:nodoc:
   module Git
 
     # Duh.
-    VERSION = "1.1.2"
+    VERSION = "1.1.3"
 
     # What do you want at the front of your release tags?
     # [default: <tt>"v"</tt>]
