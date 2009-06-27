@@ -37,17 +37,20 @@ class Hoe #:nodoc:
         tags  = `git tag -l '#{git_release_tag_prefix}*'`.split "\n"
         tag   = ENV["FROM"] || tags.last
         range = [tag, "HEAD"].compact.join ".."
-        cmd   = "git log #{range} '--format=tformat:%s|||%cN|||%cE'"
+        cmd   = "git log #{range} '--format=tformat:%s|||%aN|||%aE'"
 
         changes = `#{cmd}`.split("\n").map do |line|
           msg, author, email = line.split("|||").map { |e| e.empty? ? nil : e }
+          developer = self.author.include?(author) ||
+            self.email.include?(email)
 
-          developer = author.include?(author) || email.include?(email)
-          change    = [msg]
-          change   << "[#{author || email}]" unless developer
+          change = [msg]
+          change << "[#{author || email}]" unless developer
 
           change.join " "
         end
+
+        next if changes.empty?
 
         puts "=== #{ENV["VERSION"] || 'NEXT'} / #{Time.new.strftime '%Y-%m-%d'}"
         puts
