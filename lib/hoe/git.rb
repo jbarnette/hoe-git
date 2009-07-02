@@ -31,10 +31,11 @@ class Hoe #:nodoc:
     end
 
     def define_git_tasks #:nodoc:
+      return unless File.exist? ".git"
 
       desc "Print the current changelog."
       task "git:changelog" do
-        tags  = `git tag -l '#{git_release_tag_prefix}*'`.split "\n"
+        tags  = git_tags
         tag   = ENV["FROM"] || tags.last
         range = [tag, "HEAD"].compact.join ".."
         cmd   = "git log #{range} '--format=tformat:%s|||%aN|||%aE'"
@@ -65,8 +66,7 @@ class Hoe #:nodoc:
         tag   = ENV["TAG"]
         tag ||= "#{git_release_tag_prefix}#{ENV["VERSION"] || version}"
 
-        sh "git tag -f #{tag}"
-        git_remotes.each { |remote| sh "git push -f #{remote} tag #{tag}" }
+        git_tag_and_push tag
       end
 
       task :release_sanity do
@@ -77,6 +77,37 @@ class Hoe #:nodoc:
 
       task :release => "git:tag"
 
+    end
+
+    def git_svn?
+      File.exist? ".git/svn"
+    end
+
+    def git_tag_and_push tag
+      if git_svn?
+        sh "git svn tag #{tag} -m 'Tagging #{tag} release.'"
+      else
+        sh "git tag -f #{tag}"
+        git_remotes.each { |remote| sh "git push -f #{remote} tag #{tag}" }
+      end
+    end
+
+    def git_tags # FIX: order by date, not alpha!
+      if git_svn?
+        source = `git config svn-remote.svn.tags`.strip
+
+        unless source =~ %r{refs/remotes/(.*)/\*$}
+          abort "Can't discover git-svn tag scheme from #{source}"
+        end
+
+        prefix = $1
+
+        `git branch -r`.split("\n").
+          collect { |t| t.strip }.
+          select  { |t| t =~ %r{^#{prefix}/#{git_release_tag_prefix}} }
+      else
+        `git tag -l '#{git_release_tag_prefix}*'`.split "\n"
+      end
     end
   end
 end
