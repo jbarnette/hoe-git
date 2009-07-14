@@ -6,8 +6,8 @@ class Hoe #:nodoc:
   #    Hoe.plugin :git
   #
   #    Hoe.spec "myproj" do
-  #      self.git_release_tag_prefix = "REL_"
-  #      self.git_remotes << "myremote"
+  #      self.git_release_tag_prefix  = "REL_"
+  #      self.git_remotes            << "myremote"
   #    end
 
   module Git
@@ -39,24 +39,25 @@ class Hoe #:nodoc:
         tag   = ENV["FROM"] || tags.last
         range = [tag, "HEAD"].compact.join ".."
         cmd   = "git log #{range} '--format=tformat:%s|||%aN|||%aE'"
+        now   = Time.new.strftime "%Y-%m-%d"
 
         changes = `#{cmd}`.split("\n").map do |line|
           msg, author, email = line.split("|||").map { |e| e.empty? ? nil : e }
+
           developer = self.author.include?(author) ||
             self.email.include?(email)
 
-          change = [msg]
-          change << "[#{author || email}]" unless developer
-
-          change.join " "
+          msg << " [#{author || email}]" unless developer
+          msg
         end
 
         next if changes.empty?
 
-        puts "=== #{ENV["VERSION"] || 'NEXT'} / #{Time.new.strftime '%Y-%m-%d'}"
+        puts "=== #{ENV['VERSION'] || 'NEXT'} / #{now}"
         puts
 
         changes.each { |change| puts "* #{change}" }
+        puts
       end
 
       desc "Create and push a TAG " +
@@ -76,7 +77,6 @@ class Hoe #:nodoc:
       end
 
       task :release => "git:tag"
-
     end
 
     def git_svn?
