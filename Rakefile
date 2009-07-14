@@ -3,7 +3,7 @@ $: << "lib"
 require "rubygems"
 require "hoe"
 
-Hoe.plugin :git
+Hoe.plugin :doofus, :git
 
 Hoe.spec "hoe-git" do
   developer "John Barnette", "jbarnette@rubyforge.org"
