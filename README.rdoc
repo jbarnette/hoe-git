@@ -13,6 +13,9 @@ expect it'll learn a few more tricks in the future.
     # in your Rakefile
     Hoe.plugin :git
 
+If this plugin doesn't see a .git directory at the root of your
+project, it'll silently deactivate itself.
+
 === Autogenerating the Changelog
 
     $ rake git:changelog
@@ -35,6 +38,12 @@ like this:
 In addition to the normal RubyForge release process, this will create
 and push a <tt>v1.0.0</tt> tag. It'll also abort the release if your
 index is dirty, or if there are untracked files present.
+
+=== git-svn
+
+The <tt>git:changelog</tt> and <tt>git:tag</tt> tasks understand
+<tt>git-svn</tt> repositories, and will adjust their behavior
+accordingly.
 
 == Dependencies
 
