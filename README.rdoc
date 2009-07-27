@@ -31,6 +31,13 @@ like this:
 
     * Did a thing with the stuff. [I R Contributor]
 
+=== Generating the Manifest
+
+    $ rake git:manifest
+
+This will regenerate <tt>Manifest.txt</tt> using <tt>git
+ls-files</tt>. It respects Hoe's manifest sort order and excludes.
+
 === Tagging and Sanity Checking a Release
 
     $ rake release VERSION=1.0.0

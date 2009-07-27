@@ -9,11 +9,18 @@ class Hoe #:nodoc:
   #      self.git_release_tag_prefix  = "REL_"
   #      self.git_remotes            << "myremote"
   #    end
+  #
+  #
+  # === Tasks
+  #
+  # git:changelog:: Print the current changelog.
+  # git:manifest::  Update the manifest with Git's file list.
+  # git:tag::       Create and push a tag.
 
   module Git
 
     # Duh.
-    VERSION = "1.2.0"
+    VERSION = "1.3.0"
 
     # What do you want at the front of your release tags?
     # [default: <tt>"v"</tt>]
@@ -58,6 +65,18 @@ class Hoe #:nodoc:
 
         changes.each { |change| puts "* #{change}" }
         puts
+      end
+
+      desc "Update the manifest with Git's file list. Use Hoe's excludes."
+      task "git:manifest" do
+        with_config do |config, _|
+          files = `git ls-files`.split "\n"
+          files.reject! { |f| f =~ config["exclude"] }
+
+          File.open "Manifest.txt", "w" do |f|
+            f.puts files.sort.join("\n")
+          end
+        end
       end
 
       desc "Create and push a TAG " +
