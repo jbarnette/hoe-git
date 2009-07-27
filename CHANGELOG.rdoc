@@ -1,3 +1,10 @@
+=== 1.3.0 / 2009-07-27
+
+* Add a git:manifest task. [Phil Hagelb0rg]
+* Clean up git:changelog a bit.
+* Add the doofus Hoe plugin.
+* Update README w/better docs.
+
 === 1.2.0 / 2009-07-01
 
 * Add git-svn support for git:tag and git:changelog.
