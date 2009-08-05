@@ -103,10 +103,12 @@ class Hoe #:nodoc:
     end
 
     def git_tag_and_push tag
+      msg = "Tagging #{tag}."
+
       if git_svn?
-        sh "git svn tag #{tag} -m 'Tagging #{tag} release.'"
+        sh "git svn tag #{tag} -m '#{msg}'"
       else
-        sh "git tag -f #{tag}"
+        sh "git tag -f #{tag} -m '#{msg}'"
         git_remotes.each { |remote| sh "git push -f #{remote} tag #{tag}" }
       end
     end
