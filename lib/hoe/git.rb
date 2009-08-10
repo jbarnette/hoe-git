@@ -45,7 +45,7 @@ class Hoe #:nodoc:
         tags  = git_tags
         tag   = ENV["FROM"] || tags.last
         range = [tag, "HEAD"].compact.join ".."
-        cmd   = "git log #{range} '--format=tformat:%s|||%aN|||%aE'"
+        cmd   = %Q(git log #{range} "--format=tformat:%s|||%aN|||%aE")
         now   = Time.new.strftime "%Y-%m-%d"
 
         changes = `#{cmd}`.split("\n").map do |line|
