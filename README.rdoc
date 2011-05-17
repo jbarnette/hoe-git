@@ -24,12 +24,15 @@ This takes all the commit messages since your last release and formats
 'em into a nice RDoc fragment. If you specify <tt>VERSION</tt>, it'll
 be used in the changelog fragment. If you specify <tt>FROM</tt>, it'll
 be used as a starting point for the changelog instead of your last
-release.
+tagged release.
 
-Commits that weren't made by a project developer will be attributed,
-like this:
+The rdoc is automatically formatted into sections by using "annotated
+commit messages" by using a simple format for multi-line commit messages:
 
-    * Did a thing with the stuff. [I R Contributor]
+    ! major change description.
+    + minor change description.
+    - bug fix description.
+    un-logged description (for minor stuff like re-formatting).
 
 === Generating the Manifest
 

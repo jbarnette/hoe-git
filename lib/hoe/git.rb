@@ -42,30 +42,50 @@ class Hoe #:nodoc:
 
       desc "Print the current changelog."
       task "git:changelog" do
-        tags  = git_tags
-        tag   = ENV["FROM"] || tags.last
+        tag   = ENV["FROM"] || Hoe::Git.git_tags.last
         range = [tag, "HEAD"].compact.join ".."
-        cmd   = %Q(git log #{range} "--format=tformat:%s|||%aN|||%aE")
+        cmd   = "git log #{range} '--format=tformat:%B|||%aN|||%aE|||'"
         now   = Time.new.strftime "%Y-%m-%d"
 
-        changes = `#{cmd}`.split("\n").map do |line|
-          msg, author, email = line.split("|||").map { |e| e.empty? ? nil : e }
-
-          developer = self.author.include?(author) ||
-            self.email.include?(email)
-
-          msg << " [#{author || email}]" unless developer
-          msg
+        changes = `#{cmd}`.split(/\|\|\|/).each_slice(3).map do |msg, author, email|
+          msg.split(/\n/).reject { |s| s.empty? }
         end
+
+        changes = changes.flatten
 
         next if changes.empty?
 
+        $changes = Hash.new { |h,k| h[k] = [] }
+
+        codes = {
+          "!" => :major,
+          "+" => :minor,
+          "*" => :minor,
+          "-" => :bug,
+          "?" => :unknown,
+        }
+
+        codes_re = Regexp.escape codes.keys.join
+
+        changes.each do |change|
+          if change =~ /^\s*([#{codes_re}])\s*(.*)/ then
+            code, line = codes[$1], $2
+          else
+            code, line = codes["?"], change.chomp
+          end
+
+          $changes[code] << line
+        end
+
         puts "=== #{ENV['VERSION'] || 'NEXT'} / #{now}"
         puts
-
-        changes.each { |change| puts "* #{change}" }
+        changelog_section :major
+        changelog_section :minor
+        changelog_section :bug
+        changelog_section :unknown
         puts
       end
+
 
       desc "Update the manifest with Git's file list. Use Hoe's excludes."
       task "git:manifest" do
@@ -127,8 +147,37 @@ class Hoe #:nodoc:
           collect { |t| t.strip }.
           select  { |t| t =~ %r{^#{prefix}/#{git_release_tag_prefix}} }
       else
-        `git tag -l '#{git_release_tag_prefix}*'`.split "\n"
+        flags  = "--date-order --simplify-by-decoration --pretty=format:%H"
+        hashes = `git log #{flags}`.split(/\n/).reverse
+        names  = `git name-rev #{hashes.join " "}`.split(/\n/)
+        names  = names.map { |s| s[/tags\/(v.+)/, 1] }.compact
+        names.select { |t| t =~ %r{^#{git_release_tag_prefix}} }
       end
     end
+
+    def changelog_section code
+      name = {
+        :major   => "major enhancement",
+        :minor   => "minor enhancement",
+        :bug     => "bug fix",
+        :unknown => "unknown",
+      }[code]
+
+      changes = $changes[code]
+      count = changes.size
+      name += "s" if count > 1
+      name.sub!(/fixs/, 'fixes')
+
+      return if count < 1
+
+      puts "* #{count} #{name}:"
+      puts
+      changes.sort.each do |line|
+        puts "  * #{line}"
+      end
+      puts
+    end
+
+    module_function :git_tags, :git_svn?, :git_release_tag_prefix, :changelog_section
   end
 end
