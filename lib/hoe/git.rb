@@ -42,7 +42,7 @@ class Hoe #:nodoc:
 
       desc "Print the current changelog."
       task "git:changelog" do
-        tag   = ENV["FROM"] || Hoe::Git.git_tags.last
+        tag   = ENV["FROM"] || git_tags.last
         range = [tag, "HEAD"].compact.join ".."
         cmd   = "git log #{range} '--format=tformat:%B|||%aN|||%aE|||'"
         now   = Time.new.strftime "%Y-%m-%d"
@@ -177,7 +177,5 @@ class Hoe #:nodoc:
       end
       puts
     end
-
-    module_function :git_tags, :git_svn?, :git_release_tag_prefix, :changelog_section
   end
 end
