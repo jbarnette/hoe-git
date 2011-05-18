@@ -133,7 +133,7 @@ class Hoe #:nodoc:
       end
     end
 
-    def git_tags # FIX: order by date, not alpha!
+    def git_tags
       if git_svn?
         source = `git config svn-remote.svn.tags`.strip
 
