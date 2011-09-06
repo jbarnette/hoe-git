@@ -109,6 +109,10 @@ class Hoe #:nodoc:
         git_tag_and_push tag
       end
 
+      task "git:tags" do
+        p git_tags
+      end
+
       task :release_sanity do
         unless `git status` =~ /^nothing to commit/
           abort "Won't release: Dirty index or untracked files present!"
@@ -149,7 +153,7 @@ class Hoe #:nodoc:
       else
         flags  = "--date-order --simplify-by-decoration --pretty=format:%H"
         hashes = `git log #{flags}`.split(/\n/).reverse
-        names  = `git name-rev #{hashes.join " "}`.split(/\n/)
+        names  = `git name-rev --tags #{hashes.join " "}`.split(/\n/)
         names  = names.map { |s| s[/tags\/(v.+)/, 1] }.compact
         names.select { |t| t =~ %r{^#{git_release_tag_prefix}} }
       end
