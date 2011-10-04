@@ -155,6 +155,7 @@ class Hoe #:nodoc:
         hashes = `git log #{flags}`.split(/\n/).reverse
         names  = `git name-rev --tags #{hashes.join " "}`.split(/\n/)
         names  = names.map { |s| s[/tags\/(v.+)/, 1] }.compact
+        names  = names.map { |s| s.sub(/\^0$/, '') }
         names.select { |t| t =~ %r{^#{git_release_tag_prefix}} }
       end
     end
