@@ -1,3 +1,14 @@
+=== 1.4.1 / 2011-10-04
+
+* 1 minor enhancement:
+
+  * Added git:tags.
+
+* 2 bug fixes:
+
+  * Fixed name-rev to use --tags. Version diff?
+  * Newer versions of git are tacking on a "^0" to tag names for some stupid reason.
+
 === 1.4.0 / 2011-05-16
 
 * 2 minor enhancements:
