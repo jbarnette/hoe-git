@@ -12,5 +12,6 @@ Hoe.spec "hoe-git" do
   self.history_file     = "CHANGELOG.rdoc"
   self.readme_file      = "README.rdoc"
 
-  extra_deps << ["hoe", ">= 2.2.0"]
+  rdoc_locations <<
+    'docs.seattlerb.org:/data/www/docs.seattlerb.org/hoe-git'
 end

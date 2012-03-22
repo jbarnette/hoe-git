@@ -1,6 +1,7 @@
 = Hoe Loves Git
 
 * http://github.com/jbarnette/hoe-git
+* http://docs.seattlerb.org/hoe-git
 
 == Description
 
