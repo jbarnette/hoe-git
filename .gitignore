@@ -1,2 +1,5 @@
-doc
-pkg
+*.swp
+/doc
+/pkg
+RakeAnalyzer.dot
+RakeAnalyzer.png
