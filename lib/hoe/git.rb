@@ -103,8 +103,11 @@ class Hoe #:nodoc:
            "(default #{git_release_tag_prefix}#{version})."
 
       task "git:tag" do
-        tag   = ENV["TAG"]
-        tag ||= "#{git_release_tag_prefix}#{ENV["VERSION"] || version}"
+        tag = ENV["TAG"]
+        ver = ENV["VERSION"] || version
+        pre = ENV["PRERELEASE"] || ENV["PRE"]
+        ver += ".#{pre}" if pre
+        tag ||= "#{git_release_tag_prefix}#{ver}"
 
         git_tag_and_push tag
       end
