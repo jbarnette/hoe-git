@@ -122,7 +122,7 @@ class Hoe #:nodoc:
         end
       end
 
-      task :release => "git:tag"
+      task :release_to => "git:tag"
     end
 
     def git_svn?
