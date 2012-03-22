@@ -1,3 +1,16 @@
+=== 1.5.0 / 2012-03-22
+
+* 1 minor enhancement:
+
+  * Added prerelease support.  Use `rake release VERSION=1.0 PRE=rc.1` to
+    create a prerelease gem.
+
+* 1 bug fix:
+
+  * The git:tag task is now a dependency of release_to instead of release to
+    ensure it runs before post_release tasks
+
+
 === 1.4.1 / 2011-10-04
 
 * 1 minor enhancement:
