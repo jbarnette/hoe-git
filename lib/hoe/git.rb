@@ -20,7 +20,7 @@ class Hoe #:nodoc:
   module Git
 
     # Duh.
-    VERSION = "1.5.0"
+    VERSION = "1.6.0"
 
     # What do you want at the front of your release tags?
     # [default: <tt>"v"</tt>]
@@ -135,7 +135,9 @@ class Hoe #:nodoc:
       if git_svn?
         sh "git svn tag #{tag} -m '#{msg}'"
       else
-        sh "git tag -f #{tag} -m '#{msg}'"
+        flags = ' -s' unless `git config --get user.signingkey`.empty?
+
+        sh "git tag#{flags} -f #{tag} -m '#{msg}'"
         git_remotes.each { |remote| sh "git push -f #{remote} tag #{tag}" }
       end
     end
