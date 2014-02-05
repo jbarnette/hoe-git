@@ -12,6 +12,8 @@ Hoe.spec "hoe-git" do
   self.history_file     = "CHANGELOG.rdoc"
   self.readme_file      = "README.rdoc"
 
+  license 'MIT'
+
   rdoc_locations <<
     'docs.seattlerb.org:/data/www/docs.seattlerb.org/hoe-git'
 end
