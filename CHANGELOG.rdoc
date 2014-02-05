@@ -1,3 +1,9 @@
+=== 1.6.0 / 2014-02-05
+
+* 1 minor enhancement:
+
+  * Added signed tag support to hoe-git
+
 === 1.5.0 / 2012-03-22
 
 * 1 minor enhancement:
