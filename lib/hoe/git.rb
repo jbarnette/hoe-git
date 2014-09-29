@@ -44,7 +44,7 @@ class Hoe #:nodoc:
       task "git:changelog" do
         tag   = ENV["FROM"] || git_tags.last
         range = [tag, "HEAD"].compact.join ".."
-        cmd   = "git log #{range} '--format=tformat:%B|||%aN|||%aE|||'"
+        cmd   = %Q(git log #{range} "--format=tformat:%B|||%aN|||%aE|||")
         now   = Time.new.strftime "%Y-%m-%d"
 
         changes = `#{cmd}`.split(/\|\|\|/).each_slice(3).map do |msg, author, email|
@@ -133,11 +133,11 @@ class Hoe #:nodoc:
       msg = "Tagging #{tag}."
 
       if git_svn?
-        sh "git svn tag #{tag} -m '#{msg}'"
+        sh %Q(git svn tag #{tag} -m "#{msg}")
       else
         flags = ' -s' unless `git config --get user.signingkey`.empty?
 
-        sh "git tag#{flags} -f #{tag} -m '#{msg}'"
+        sh %Q(git tag#{flags} -f #{tag} -m "#{msg}")
         git_remotes.each { |remote| sh "git push -f #{remote} tag #{tag}" }
       end
     end
